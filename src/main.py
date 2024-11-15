@@ -14,4 +14,3 @@ def sync_notion_with_google_calendar():
 if __name__ == "__main__":    
     sync_notion_with_google_calendar()
         
-
