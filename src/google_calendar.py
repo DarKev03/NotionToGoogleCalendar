@@ -3,7 +3,7 @@ import pickle
 import sys
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from googleapiclient.discovery import build   
+from googleapiclient.discovery import build
 from google.auth.credentials import Credentials
 from datetime import datetime, timedelta, timezone
 
@@ -20,7 +20,9 @@ def get_google_calendar_service():
 
     # Crear el flujo de autenticación desde el archivo de credenciales
     flow = InstalledAppFlow.from_client_secrets_file('config/credentials.json', SCOPES)
-    creds = flow.run_local_server(port=0)
+
+    # Usar run_console para entornos sin navegador
+    creds = flow.run_console()
 
     # Guardar las credenciales para futuras ejecuciones
     with open('token.pickle', 'wb') as token:
@@ -28,7 +30,6 @@ def get_google_calendar_service():
 
     service = build('calendar', 'v3', credentials=creds)
     return service
-
 
 # Crear eventos en Google Calendar
 def create_google_calendar_event(service, task):
