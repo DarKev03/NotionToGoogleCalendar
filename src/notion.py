@@ -1,6 +1,7 @@
 import requests
 from config.config import NOTION_TOKEN, DATABASE_ID
 
+#Conexión a la API de Notion
 def get_notion_tasks():
     url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
     headers = {
@@ -22,3 +23,4 @@ def get_notion_tasks():
     else:
         print(f"Error fetching Notion tasks: {response.status_code}")
         return []
+
