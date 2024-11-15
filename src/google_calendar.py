@@ -22,6 +22,11 @@ def get_google_calendar_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+            # Crear credenciales desde el secreto de GitHub
+            client_secrets_content = os.getenv('GOOGLE_CREDENTIALS')
+            with open('config/credentials.json', 'w') as creds_file:
+                creds_file.write(client_secrets_content)
+            
             flow = InstalledAppFlow.from_client_secrets_file('config/credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         with open('token.pickle', 'wb') as token:
@@ -29,7 +34,6 @@ def get_google_calendar_service():
     
     service = build('calendar', 'v3', credentials=creds)
     return service
-
 # Crear eventos en Google Calendar
 def create_google_calendar_event(service, task):
     if "T" in task['date']:
