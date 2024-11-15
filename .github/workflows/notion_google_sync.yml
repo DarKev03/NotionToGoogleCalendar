@@ -24,6 +24,8 @@ jobs:
           if [ -z "$GOOGLE_CREDENTIALS" ]; then
             echo "Error: GOOGLE_CREDENTIALS is not set"
             exit 1
+          else
+            echo "GOOGLE_CREDENTIALS set correctly"
           fi
 
       - name: Create credentials.json
