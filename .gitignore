@@ -1,4 +1,5 @@
 config/credentials.json
+config/config.py
 token.pickle
 __pycache__/
 *.pyc
