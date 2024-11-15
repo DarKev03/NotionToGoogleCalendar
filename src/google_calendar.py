@@ -12,28 +12,30 @@ from datetime import datetime, timedelta, timezone
 
 
 #Conexión con Google Calendar
+# Conexión con Google Calendar usando OAuth
 def get_google_calendar_service():
     creds = None
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            # Crear credenciales desde el secreto de GitHub
-            client_secrets_content = os.getenv('GOOGLE_CREDENTIALS')
-            with open('config/credentials.json', 'w') as creds_file:
-                creds_file.write(client_secrets_content)
-            
-            flow = InstalledAppFlow.from_client_secrets_file('config/credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
-    
+    client_secrets_content = os.getenv('GOOGLE_CREDENTIALS')
+
+    # Verificar que la variable de entorno GOOGLE_CREDENTIALS no esté vacía
+    if not client_secrets_content:
+        raise ValueError("GOOGLE_CREDENTIALS is not set. Please ensure the secret is correctly configured.")
+
+    # Guardar temporalmente las credenciales en un archivo
+    with open('config/credentials.json', 'w') as creds_file:
+        creds_file.write(client_secrets_content)
+
+    # Usar las credenciales para crear un flujo de autenticación
+    flow = InstalledAppFlow.from_client_secrets_file('config/credentials.json', SCOPES)
+    creds = flow.run_local_server(port=0)
+
+    # Guardar las credenciales para futuras ejecuciones
+    with open('token.pickle', 'wb') as token:
+        pickle.dump(creds, token)
+
     service = build('calendar', 'v3', credentials=creds)
     return service
+
 # Crear eventos en Google Calendar
 def create_google_calendar_event(service, task):
     if "T" in task['date']:
