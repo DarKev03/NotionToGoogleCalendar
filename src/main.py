@@ -11,8 +11,7 @@ def sync_notion_with_google_calendar():
         if not is_task_in_google_calendar(service, task['name'], task['date']):
             create_google_calendar_event(service, task)
 
-if __name__ == "__main__":
-    while True:
-        sync_notion_with_google_calendar()
-        sleep(3600*6)
+if __name__ == "__main__":    
+    sync_notion_with_google_calendar()
+        
 
