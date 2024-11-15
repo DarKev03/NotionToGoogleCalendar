@@ -26,6 +26,7 @@ jobs:
             exit 1
           else
             echo "GOOGLE_CREDENTIALS set correctly"
+            echo "Length of GOOGLE_CREDENTIALS: ${#GOOGLE_CREDENTIALS}"
           fi
 
       - name: Create credentials.json
@@ -33,6 +34,8 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: |
           echo "$GOOGLE_CREDENTIALS" > config/credentials.json
+          echo "Created credentials.json with size:"
+          wc -c config/credentials.json
 
       - name: Install Dependencies
         run: |
