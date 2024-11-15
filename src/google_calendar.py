@@ -5,27 +5,20 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build   
 from google.auth.credentials import Credentials
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from config.config import SCOPES
 from datetime import datetime, timedelta, timezone
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from config.config import SCOPES
 
-
-#Conexión con Google Calendar
 # Conexión con Google Calendar usando OAuth
 def get_google_calendar_service():
     creds = None
-    client_secrets_content = os.getenv('GOOGLE_CREDENTIALS')
 
-    # Verificar que la variable de entorno GOOGLE_CREDENTIALS no esté vacía
-    if not client_secrets_content:
-        raise ValueError("GOOGLE_CREDENTIALS is not set. Please ensure the secret is correctly configured.")
+    # Verificar si existe el archivo de credenciales
+    if not os.path.exists('config/credentials.json'):
+        raise FileNotFoundError("The credentials.json file does not exist. Please ensure it is created correctly.")
 
-    # Guardar temporalmente las credenciales en un archivo
-    with open('config/credentials.json', 'w') as creds_file:
-        creds_file.write(client_secrets_content)
-
-    # Usar las credenciales para crear un flujo de autenticación
+    # Crear el flujo de autenticación desde el archivo de credenciales
     flow = InstalledAppFlow.from_client_secrets_file('config/credentials.json', SCOPES)
     creds = flow.run_local_server(port=0)
 
@@ -35,6 +28,7 @@ def get_google_calendar_service():
 
     service = build('calendar', 'v3', credentials=creds)
     return service
+
 
 # Crear eventos en Google Calendar
 def create_google_calendar_event(service, task):
