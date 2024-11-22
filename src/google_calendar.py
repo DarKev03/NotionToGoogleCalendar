@@ -102,8 +102,3 @@ def is_task_in_google_calendar(service, task_name, task_date):
         if event['summary'].strip().lower() == task_name.strip().lower():
             return True
     return False
-
-def list_calendars(service):
-    calendars = service.calendarList().list().execute()
-    for calendar in calendars['items']:
-        print(f"ID: {calendar['id']}, Name: {calendar['summary']}")
