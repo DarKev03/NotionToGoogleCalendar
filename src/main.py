@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
-from google_calendar import create_google_calendar_event, get_google_calendar_service, is_task_in_google_calendar
-from notion import get_notion_tasks
+from src.google_calendar import create_google_calendar_event, get_google_calendar_service, is_task_in_google_calendar
+from src.notion import get_notion_tasks
+
 
 app = Flask(__name__)
 
