@@ -44,26 +44,36 @@ def get_google_calendar_service():
 
 # Crear eventos en Google Calendar
 def create_google_calendar_event(service, task):
+    # Si la fecha contiene una "T", significa que tiene fecha y hora juntas; ajusta esto
     if "T" in task['date']:
-        task['date'] = task['date'].split("T")[0] 
+        task['date'] = task['date'].split("T")[0]
 
     # Crear el evento con los datos corregidos
     event = {
         'summary': task['name'],
         'start': {
-            'date': task['date'],  
+            'date': task['date'],  # Aquí usamos 'date' para eventos de día completo
             'timeZone': 'UTC',
         },
         'end': {
-            'date': task['date'],  
+            'date': task['date'],  # Aquí usamos 'date' para eventos de día completo
             'timeZone': 'UTC',
         },
     }
+
+    # Depuración: imprime los datos del evento antes de enviarlo
+    print(f"Event data: {event}")
+
     try:
+        # Crear el evento en Google Calendar
         event_result = service.events().insert(calendarId='primary', body=event).execute()
+
+        # Depuración: confirma si el evento fue creado correctamente
         print(f"Event created: {event_result.get('htmlLink')}")
     except Exception as e:
+        # Capturar y mostrar cualquier error durante la creación del evento
         print(f"Error creating event: {e}")
+
 
 # Verificar si una tarea ya existe en Google Calendar
 def is_task_in_google_calendar(service, task_name, task_date):
@@ -92,3 +102,8 @@ def is_task_in_google_calendar(service, task_name, task_date):
         if event['summary'].strip().lower() == task_name.strip().lower():
             return True
     return False
+
+def list_calendars(service):
+    calendars = service.calendarList().list().execute()
+    for calendar in calendars['items']:
+        print(f"ID: {calendar['id']}, Name: {calendar['summary']}")
