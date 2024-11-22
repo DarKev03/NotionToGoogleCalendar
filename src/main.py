@@ -1,7 +1,8 @@
-from threading import Timer, Thread
+from threading import Thread, Timer
 from flask import Flask, jsonify, request
 from src.google_calendar import create_google_calendar_event, get_google_calendar_service, is_task_in_google_calendar
 from src.notion import get_notion_tasks
+
 
 app = Flask(__name__)
 
@@ -11,8 +12,8 @@ def home():
 
 @app.route("/sync", methods=["GET"])
 def sync():
-    """Sincronización manual activada desde el endpoint."""
     try:
+        # Sincronizar Notion con Google Calendar
         tasks = get_notion_tasks()
         service = get_google_calendar_service()
 
