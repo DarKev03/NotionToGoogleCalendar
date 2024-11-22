@@ -1,30 +1,42 @@
 import os
 import pickle
 import sys
+import json
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build   
 from google.auth.credentials import Credentials
+from google.oauth2.service_account import Credentials as ServiceAccountCredentials
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from config.config import SCOPES
 from datetime import datetime, timedelta, timezone
 
 
-
-#Conexión con Google Calendar
+# Conexión con Google Calendar
 def get_google_calendar_service():
     creds = None
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    token_file = 'token.pickle'
+    
+    # Cargar credenciales desde el archivo token.pickle si existe
+    if os.path.exists(token_file):
+        with open(token_file, 'rb') as token:
             creds = pickle.load(token)
     
+    # Si las credenciales no son válidas, refrescarlas o generar nuevas
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('config/credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.pickle', 'wb') as token:
+            # Cargar las credenciales desde la variable de entorno
+            credentials_json = os.getenv("GOOGLE_CREDENTIALS")
+            if not credentials_json:
+                raise ValueError("La variable de entorno GOOGLE_CREDENTIALS no está configurada.")
+            
+            credentials_info = json.loads(credentials_json)
+            creds = ServiceAccountCredentials.from_service_account_info(credentials_info, scopes=SCOPES)
+        
+        # Guardar las credenciales actualizadas en token.pickle
+        with open(token_file, 'wb') as token:
             pickle.dump(creds, token)
     
     service = build('calendar', 'v3', credentials=creds)
