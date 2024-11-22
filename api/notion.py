@@ -2,8 +2,7 @@ import os
 import requests
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-NOTION_TOKEN = os.getenv('NOTION_TOKEN')
-DATABASE_ID = os.getenv('DATABASE_ID')
+from config.config import NOTION_TOKEN, DATABASE_ID
 
 #Conexión a la API de Notion
 def get_notion_tasks():
@@ -31,4 +30,3 @@ def get_notion_tasks():
     else:
         print(f"Error fetching Notion tasks: {response.status_code}{response.text}")
         return []
-
